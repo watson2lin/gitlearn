@@ -34,7 +34,6 @@ public class MainConfig {
      */
     @Value("${http.connectTimeout}")
     private int connectTimeout;
-
     /**
      * 传递数据的超时时间
      */
