@@ -1,0 +1,42 @@
+<configuration scan="true" scanPeriod=" 5 seconds">
+
+	<!--<jmxConfigurator />-->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{56} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>../logs/provider.log</file>
+		<!-- 日志压缩处理，最多保留20个日志文件 -->
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>../logs/provider.%i.log.zip</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>20</maxIndex>
+		</rollingPolicy>
+
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<!-- 日志文件的最大值 -->
+			<maxFileSize>200MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{56} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+		<destination>@logstash.server@</destination>
+		<keepAliveDuration>5 minutes</keepAliveDuration>
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+			<!-- 传输的log中包含了自定义的部分内容，用于方便检索 -->
+			<customFields>{"application":"provider"}</customFields>
+		</encoder>
+	</appender>
+
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT"/>
+		<!--<appender-ref ref="FILE"/>-->
+		<!--<appender-ref ref="stash"/>-->
+	</root>
+</configuration>
